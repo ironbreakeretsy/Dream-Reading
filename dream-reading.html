@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ironbreaker Foresees — Dream Reading</title>
+<style>
+  :root {
+    --gold: #C9A961; --violet: #8B7FD1; --green: #6FA88C;
+    --ink: #EDEAF6; --muted: #9691B8;
+    --panel: rgba(255,255,255,0.035); --panel-border: rgba(255,255,255,0.09);
+    --field-bg: rgba(0,0,0,0.28);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: radial-gradient(circle at 22% -12%, #3a4176 0%, #262a4d 46%, #1a1c33 100%);
+    color: var(--ink); font-family: 'Iowan Old Style', Georgia, ui-serif, serif;
+    position: relative; overflow-x: hidden;
+  }
+  #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; border-radius: 50%; background: #F4F1EA; animation: tw var(--d) ease-in-out var(--delay) infinite; }
+  @keyframes tw { 0%,100%{opacity:.12} 50%{opacity:.85} }
+  .wrap { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 56px 22px 80px; }
+  .eyebrow { font-family: ui-sans-serif, system-ui, sans-serif; letter-spacing: .22em; font-size: 11px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+  .moon { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset -5px -2px 0 0 var(--gold); }
+  h1 { font-size: clamp(27px, 5vw, 40px); font-weight: 500; line-height: 1.14; margin: 0 0 12px; }
+  .lede { font-family: ui-sans-serif, system-ui, sans-serif; color: #B6B1D6; font-size: 15px; line-height: 1.6; margin: 0 0 26px; }
+  .panel { background: var(--panel); border: 1px solid var(--panel-border); border-radius: 18px; padding: 26px; backdrop-filter: blur(6px); margin-bottom: 22px; }
+  label { display: block; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+  input[type=text], textarea {
+    width: 100%; background: var(--field-bg); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px; padding: 11px 14px; color: var(--ink);
+    font-family: ui-sans-serif, system-ui, sans-serif; font-size: 15px; margin-bottom: 6px;
+  }
+  input[type=text] { margin-bottom: 18px; }
+  textarea { resize: vertical; min-height: 130px; }
+  input:focus, textarea:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .counter { text-align: right; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; color: var(--muted); margin: 0 2px 18px 0; }
+  .counter.warn { color: var(--gold); }
+  .counter.hint { color: #E28B8B; }
+  .seg { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .seg button { flex: 1; min-width: 88px; background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.12); color: var(--muted); border-radius: 10px; padding: 10px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; cursor: pointer; transition: .15s; }
+  .seg button.on { border-color: var(--gold); color: var(--gold); background: rgba(201,169,97,0.12); }
+  .toggle-opt { display: flex; align-items: center; gap: 8px; width: 100%; background: rgba(139,127,209,0.08); border: 1px solid rgba(139,127,209,0.3); color: #B9AEEC; border-radius: 10px; padding: 11px 14px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13.5px; cursor: pointer; margin-bottom: 18px; transition: .15s; }
+  .toggle-opt:hover { background: rgba(139,127,209,0.14); }
+  .toggle-opt .plus { font-size: 17px; line-height: 1; }
+  .cta { width: 100%; border: none; border-radius: 11px; padding: 15px; font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 15.5px; cursor: pointer; color: #12142b; background: rgba(255,255,255,0.08); transition: .18s; margin-bottom: 10px; }
+  .cta.ready { background: linear-gradient(90deg, var(--green), #8FC2A9); color: #0c1a14; box-shadow: 0 4px 20px rgba(111,168,140,0.25); }
+  .cta.ready:hover { filter: brightness(1.06); }
+  .cta:disabled { color: #6b6790; cursor: not-allowed; }
+  .cta.gold { background: linear-gradient(90deg, var(--gold), var(--violet)); color: #12142b; }
+  .cta.ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: var(--ink); }
+  .cta.ghost:hover { background: rgba(255,255,255,0.09); }
+  .note { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12.5px; color: var(--muted); text-align: center; margin-top: 8px; line-height: 1.5; }
+  .faint { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11px; color: #5c5980; text-align: center; margin-top: 12px; line-height: 1.5; }
+  .hidden { display: none !important; }
+  .receive { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; color: #B6B1D6; line-height: 1.7; margin: 0 0 28px; }
+  .receive strong { color: var(--ink); font-weight: 600; }
+  .receive .dot { color: var(--gold); }
+  .tones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 30px; align-items: stretch; }
+  .tone-card { border-radius: 14px; padding: 20px 14px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .tone-card.t-mystic { background: linear-gradient(160deg, rgba(179,157,219,0.22), rgba(179,157,219,0.07)); border: 1px solid rgba(179,157,219,0.4); }
+  .tone-card.t-psych  { background: linear-gradient(160deg, rgba(150,190,225,0.22), rgba(150,190,225,0.07)); border: 1px solid rgba(150,190,225,0.4); }
+  .tone-card.t-ancient{ background: linear-gradient(160deg, rgba(160,210,180,0.22), rgba(160,210,180,0.07)); border: 1px solid rgba(160,210,180,0.4); }
+  .tone-glyph { font-size: 24px; line-height: 24px; height: 30px; display: flex; align-items: center; justify-content: center; color: #F4F1EA; margin-bottom: 10px; }
+  .tone-title { font-family: 'Iowan Old Style', Georgia, ui-serif, serif; font-size: 15px; color: var(--ink); margin-bottom: 7px; line-height: 1.25; min-height: 38px; display: flex; align-items: center; justify-content: center; }
+  .tone-glyph.g-ancient { font-size: 31px; }
+  .tone-desc { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11.5px; color: #C9C4E0; line-height: 1.45; }
+  @media (max-width: 560px) {
+    .tones { grid-template-columns: 1fr; gap: 10px; }
+    .tone-card { flex-direction: row; align-items: center; gap: 14px; text-align: left; padding: 14px 16px; }
+    .tone-glyph { margin-bottom: 0; }
+    .tone-title { min-height: 0; display: block; }
+  }
+  .disclaimer { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11.5px; color: #6b6790; line-height: 1.55; text-align: center; margin-top: 30px; }
+  #summaryBox { white-space: pre-wrap; background: var(--field-bg); border: 1px dashed rgba(201,169,97,0.4); border-radius: 12px; padding: 16px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13.5px; color: #D8D4EC; line-height: 1.6; text-align: left; -webkit-user-select: text; user-select: text; margin-bottom: 18px; }
+  #textFallback { width:100%; min-height:180px; background: var(--field-bg); border:1px solid rgba(201,169,97,0.45); border-radius:10px; padding:12px 14px; color:#EDEAF6; font-family: ui-sans-serif, system-ui, sans-serif; font-size:13.5px; line-height:1.55; margin-bottom:10px; -webkit-user-select:text; user-select:text; }
+  #cardPreview { width: 100%; max-width: 380px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); margin: 0 auto 18px; display: block; }
+  @media (prefers-reduced-motion: reduce) { .star { animation: none !important; } }
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div class="wrap">
+  <div class="eyebrow"><span class="moon"></span> Ironbreaker Foresees — Dream Reading</div>
+
+  <section id="formStep">
+    <h1>Your dream, read three ways.</h1>
+    <p class="lede">Describe your dream and you'll receive three written interpretations, each in a different tone — read and written by a real person, not a machine.</p>
+    <div class="tones">
+      <div class="tone-card t-mystic">
+        <div class="tone-glyph">&#9790;</div>
+        <div class="tone-title">Mystical &amp; Symbolic</div>
+        <div class="tone-desc">Your dream read through timeless symbols</div>
+      </div>
+      <div class="tone-card t-psych">
+        <div class="tone-glyph">&#9672;</div>
+        <div class="tone-title">Subconscious &amp; Psychological</div>
+        <div class="tone-desc">What your inner mind may be signaling</div>
+      </div>
+      <div class="tone-card t-ancient">
+        <div class="tone-glyph g-ancient">&#10022;</div>
+        <div class="tone-title">Ancient Dream Wisdom</div>
+        <div class="tone-desc">Meanings drawn from old dream traditions</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <label>What shall we call you?</label>
+      <input type="text" id="nickname" placeholder="A name or nickname" />
+
+      <label>Gender</label>
+      <div class="seg" id="genderSeg">
+        <button data-v="Woman">Woman</button>
+        <button data-v="Man">Man</button>
+        <button data-v="Prefer not to say">Prefer not</button>
+      </div>
+
+      <label>Age range</label>
+      <div class="seg" id="ageSeg">
+        <button data-v="18-24">18-24</button>
+        <button data-v="25-34">25-34</button>
+        <button data-v="35-44">35-44</button>
+        <button data-v="45+">45+</button>
+      </div>
+
+      <label>Describe your dream</label>
+      <textarea id="dream" maxlength="1500" placeholder="Write your dream as fully as you remember it..."></textarea>
+      <div class="counter" id="counter">0 | 1500</div>
+
+      <button class="toggle-opt" id="toggleOpt"><span class="plus">+</span> Add three optional details — they make your reading richer</button>
+      <div id="optBlock" class="hidden">
+        <label>What did you feel — in the dream or when you woke?</label>
+        <input type="text" id="feeling" placeholder="Optional" />
+        <label>Have you had this dream, or one like it, before?</label>
+        <input type="text" id="recurring" placeholder="Optional" />
+        <label>Could it connect to something happening in your life now?</label>
+        <input type="text" id="context" placeholder="Optional" />
+      </div>
+
+      <button class="cta" id="prepare" disabled>Prepare my dream for reading</button>
+      <p class="note">Your three-tone dream reading is written by a real person and delivered via Etsy Messages within 24 hours.</p>
+    </div>
+  </section>
+
+  <section id="sendStep" class="hidden">
+    <h1>One last step.</h1>
+    <p class="lede">Send your dream to us through Etsy Messages — as text or as an image. Your three written interpretations are prepared by a real human reader and delivered within 24 hours.</p>
+    <div class="panel">
+      <img id="cardPreview" alt="Your dream reading card" />
+      <button class="cta gold" id="sendPng">Send as image</button>
+      <button class="cta ghost" id="savePng">Save image to my photos</button>
+      <button class="cta ghost" id="copyBtn">Copy as text instead</button>
+      <textarea id="textFallback" class="hidden" readonly></textarea>
+      <p class="note" id="copyNote">Send whichever is easier — text or image.</p>
+      <p class="faint" id="faintNote">On phones, press and hold the image above to save it. If anything doesn't work, a screenshot of this page works just as well.</p>
+      <button class="toggle-opt" id="backBtn" style="justify-content:center;margin:16px 0 0;">&larr; Edit my answers</button>
+    </div>
+  </section>
+
+  <p class="disclaimer">For self-exploration, creative reflection &amp; entertainment purposes only — not medical, financial, legal, or psychological advice.</p>
+</div>
+
+<canvas id="canvas" width="760" height="1000" style="display:none;"></canvas>
+
+<script>
+(function(){
+  const box=document.getElementById('stars');
+  for(let i=0;i<46;i++){const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*1.7+.6;s.style.width=sz+'px';s.style.height=sz+'px';
+    s.style.top=(Math.random()*100)+'%';s.style.left=(Math.random()*100)+'%';
+    s.style.setProperty('--d',(Math.random()*4+3)+'s');s.style.setProperty('--delay',(Math.random()*6)+'s');
+    box.appendChild(s);}
+})();
+
+const state={gender:'',age:''};
+function seg(id,key){
+  document.querySelectorAll('#'+id+' button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');state[key]=b.dataset.v;validate();
+    });
+  });
+}
+seg('genderSeg','gender');seg('ageSeg','age');
+
+const nickname=document.getElementById('nickname');
+const dream=document.getElementById('dream');
+const feeling=document.getElementById('feeling');
+const recurring=document.getElementById('recurring');
+const context=document.getElementById('context');
+const prepare=document.getElementById('prepare');
+const counter=document.getElementById('counter');
+
+function updateCounter(){
+  const n=dream.value.length;
+  counter.textContent=n+' | 1500';
+  counter.classList.toggle('warn',n>1350);
+  counter.classList.toggle('hint',n>0&&n<30);
+}
+function validate(){
+  const ok=nickname.value.trim()&&dream.value.trim()&&state.gender&&state.age;
+  prepare.disabled=!ok;
+  prepare.classList.toggle('ready',!!ok);
+}
+nickname.addEventListener('input',validate);
+dream.addEventListener('input',()=>{updateCounter();validate();});
+updateCounter();
+
+document.getElementById('toggleOpt').addEventListener('click',function(){
+  const b=document.getElementById('optBlock');
+  const open=b.classList.toggle('hidden');
+  this.innerHTML=open?'<span class="plus">+</span> Add three optional details — they make your reading richer':'<span class="plus">&minus;</span> Hide optional details';
+});
+
+function buildSummary(){
+  let s='- DREAM READING REQUEST -\n\n';
+  s+='Name: '+nickname.value.trim()+'\n';
+  s+='Gender: '+state.gender+'\n';
+  s+='Age range: '+state.age+'\n\n';
+  s+='DREAM:\n'+dream.value.trim()+'\n';
+  if(feeling.value.trim()) s+='\nFelt: '+feeling.value.trim()+'\n';
+  if(recurring.value.trim()) s+='Recurring: '+recurring.value.trim()+'\n';
+  if(context.value.trim()) s+='Life context: '+context.value.trim()+'\n';
+  return s;
+}
+
+// ---- Render the card to canvas (branded image) ----
+function renderCard(){
+  const c=document.getElementById('canvas');
+  const x=c.getContext('2d');
+  const W=c.width,H=c.height;
+  // bg
+  const g=x.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#232853');g.addColorStop(.5,'#14162e');g.addColorStop(1,'#0a0b1a');
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  // stars
+  x.fillStyle='rgba(244,241,234,0.55)';
+  for(let i=0;i<70;i++){const sx=Math.random()*W,sy=Math.random()*H,r=Math.random()*1.6+.4;
+    x.beginPath();x.arc(sx,sy,r,0,7);x.fill();}
+  // header
+  x.fillStyle='#C9A961';x.font='600 22px ui-sans-serif, system-ui';x.textAlign='left';
+  x.fillText('IRONBREAKER FORESEES', 54, 78);
+  x.fillStyle='#9691B8';x.font='15px ui-sans-serif, system-ui';
+  x.fillText('DREAM READING', 54, 104);
+  // divider
+  x.strokeStyle='rgba(201,169,97,0.4)';x.lineWidth=1;
+  x.beginPath();x.moveTo(54,128);x.lineTo(W-54,128);x.stroke();
+  // meta
+  let y=180;
+  x.fillStyle='#EDEAF6';x.font='600 20px ui-sans-serif, system-ui';
+  x.fillText(nickname.value.trim(), 54, y);
+  x.fillStyle='#9691B8';x.font='15px ui-sans-serif, system-ui';
+  x.fillText(state.gender+'   ·   '+state.age, 54, y+28);
+  y+=80;
+  // dream label
+  x.fillStyle='#C9A961';x.font='600 14px ui-sans-serif, system-ui';
+  x.fillText('THE DREAM', 54, y); y+=32;
+  // dream body wrapped
+  x.fillStyle='#D8D4EC';x.font='17px ui-sans-serif, system-ui';
+  y=wrapText(x, dream.value.trim(), 54, y, W-108, 26);
+  // optional
+  const opt=[];
+  if(feeling.value.trim())opt.push(['Felt', feeling.value.trim()]);
+  if(recurring.value.trim())opt.push(['Recurring', recurring.value.trim()]);
+  if(context.value.trim())opt.push(['Life context', context.value.trim()]);
+  if(opt.length){ y+=18;
+    for(const [k,v] of opt){
+      x.fillStyle='#C9A961';x.font='600 13px ui-sans-serif, system-ui';
+      x.fillText(k.toUpperCase(), 54, y); y+=22;
+      x.fillStyle='#D8D4EC';x.font='16px ui-sans-serif, system-ui';
+      y=wrapText(x, v, 54, y, W-108, 24)+10;
+    }
+  }
+  // footer
+  x.fillStyle='#5c5980';x.font='13px ui-sans-serif, system-ui';
+  x.fillText('For reflection & entertainment only', 54, H-46);
+  return c;
+}
+function wrapText(ctx,text,x0,y0,maxW,lh){
+  const words=(text||'').split(/\s+/);let line='';let y=y0;
+  for(const w of words){
+    const test=line?line+' '+w:w;
+    if(ctx.measureText(test).width>maxW && line){ ctx.fillText(line,x0,y);line=w;y+=lh; }
+    else line=test;
+  }
+  if(line)ctx.fillText(line,x0,y);
+  return y+lh;
+}
+
+function cardBlob(){
+  return new Promise(res=>{ renderCard().toBlob(b=>res(b),'image/png'); });
+}
+
+prepare.addEventListener('click',()=>{
+  if(prepare.disabled) return;
+  document.getElementById('cardPreview').src=renderCard().toDataURL('image/png');
+  document.getElementById('formStep').classList.add('hidden');
+  document.getElementById('sendStep').classList.remove('hidden');
+  window.scrollTo(0,0);
+});
+
+document.getElementById('backBtn').addEventListener('click',()=>{
+  document.getElementById('sendStep').classList.add('hidden');
+  document.getElementById('formStep').classList.remove('hidden');
+  window.scrollTo(0,0);
+});
+
+// Save PNG (with fallbacks for restricted browsers)
+document.getElementById('savePng').addEventListener('click',async ()=>{
+  const note=document.getElementById('copyNote');
+  const url=renderCard().toDataURL('image/png');
+  let worked=false;
+  try{
+    const a=document.createElement('a');a.href=url;a.download='my-dream-reading.png';
+    a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a);
+    worked=true;
+  }catch(e){ worked=false; }
+  if(!worked){
+    try{ window.open(url,'_blank'); worked=true; }catch(e){}
+  }
+  document.getElementById('cardPreview').src=url;
+  note.textContent = worked
+    ? 'Image ready — if it did not download, press and hold the image above to save it.'
+    : 'Press and hold the image above to save it to your photos.';
+  note.style.color='#C9A961';
+});
+
+// Send PNG via share sheet
+document.getElementById('sendPng').addEventListener('click',async ()=>{
+  const note=document.getElementById('copyNote');
+  try{
+    const blob=await cardBlob();
+    const file=new File([blob],'my-dream-reading.png',{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:'Dream Reading'});
+    } else {
+      const url=renderCard().toDataURL('image/png');
+      const a=document.createElement('a');a.href=url;a.download='my-dream-reading.png';
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      note.textContent='Image saved — attach it in an Etsy Message to us.';note.style.color='#6FA88C';
+    }
+  }catch(e){
+    note.textContent='Try "Save image to my photos", then attach it in Etsy Messages.';note.style.color='#C9A961';
+  }
+});
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.top='-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  let ok=false;try{ok=document.execCommand('copy');}catch(e){ok=false;}
+  document.body.removeChild(ta);return ok;
+}
+document.getElementById('copyBtn').addEventListener('click',function(){
+  const text=buildSummary();
+  const note=document.getElementById('copyNote');
+  const box=document.getElementById('textFallback');
+  // always reveal a selectable box so the user can copy no matter what
+  box.value=text; box.classList.remove('hidden');
+  function ok(){ note.textContent='Copied. Paste it into an Etsy Message to us.'; note.style.color='#6FA88C'; }
+  function manual(){
+    note.textContent='Tap the box above, select all, and copy — then paste into Etsy Messages.';
+    note.style.color='#C9A961';
+    try{ box.focus(); box.setSelectionRange(0, box.value.length); }catch(e){}
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok).catch(()=>{ fallbackCopy(text)?ok():manual(); });
+  } else { fallbackCopy(text)?ok():manual(); }
+});
+</script>
+</body>
+</html>
